@@ -51,9 +51,7 @@ export default function DocumentCard({name, title, notes, imagePath, index , onO
                 {notes}
                 </Text>
             </CardBody>
-            <SingleSource objectFit='cover'
-                src={imagePath}
-                alt='Chakra UI'/>
+            <img src={imagePath}/>
         </Card>
     )
 }
