@@ -15,7 +15,7 @@ import { io } from "socket.io-client";
 
 import UploadModal from "../Uploading/UploadModal"
 import {useDisclosure} from "@chakra-ui/react"
-import firebaseConfig from "../../../helpers/apiKeys";
+import firebaseConfig from "../../helpers/apiKeys";
 
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
