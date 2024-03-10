@@ -6,9 +6,9 @@ import React from "react"
 import { Card, CardHeader, CardBody ,Flex, Avatar, Box, Heading, Text, IconButton, Image } from "@chakra-ui/react"
 import {HamburgerIcon, AddIcon, ExternalLinkIcon, EditIcon} from '@chakra-ui/icons'
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react"
-import { SingleSource } from "./CustomImage";
+
 import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+
 
 import { update_form } from "../Uploading/modalSlice";
 
