@@ -1,25 +1,24 @@
-import React from "react";
+import React, {useMemo,useEffect, useState } from "react";
 import MenuButton from "../Navigation/MenuButton";
 import {useDispatch, useSelector} from 'react-redux';
 import { change_page } from "../Window/windowSlice";
 import { CalendarIcon, RepeatIcon, AddIcon, InfoIcon, CheckCircleIcon , PlusSquareIcon} from "@chakra-ui/icons";
 import DocumentCard from "../Applications/DocumentCard";
-import { useEffect, useState } from "react";
-import axios from "axios";
+
+
 import {ToyotaIcon} from '../brand_icons/ToyotaIcon'
 import { FordIcon } from "../brand_icons/FordIcon";
 import { LexusIcon } from "../brand_icons/LexusIcon";
 import { set_update_page } from "./pageSlice";
-import { Button, Icon, position,Spinner } from "@chakra-ui/react";
-import { io } from "socket.io-client";
+import { Button, Icon,Spinner } from "@chakra-ui/react";
+
 
 import UploadModal from "../Uploading/UploadModal"
 import {useDisclosure} from "@chakra-ui/react"
 import firebaseConfig from "../../helpers/apiKeys";
 
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import {collection, addDoc, readDoc, getFirestore, getDoc, doc} from "firebase/firestore"
+import {getFirestore, getDoc, doc} from "firebase/firestore"
 
 
 
@@ -48,7 +47,48 @@ export default function Page()
     const [cards, setCards] = useState([]);
 
 
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+            //Object that stores pages as other objects
+    //Button configs is an array of objects that represent the buttons(MenuButton)
+    //(Text, action, icon, and color scheme)
+    //documentCards is a flag to check if we should populate with cards
+    const pageConfigs = useMemo(() => { return{
+        
+            home_page: { buttonConfigs: [ {text: "KBS", action: ()=> dispatch(change_page("kbs_page")), icon: CalendarIcon, colorScheme: "green"},
+                                          {text: "Toyota", action: ()=> dispatch(change_page("toyota_main")), icon: ToyotaIcon, colorScheme: "red"},
+                                          {text: "Lexus", action: ()=> dispatch(change_page("lexus_main")), icon: LexusIcon, colorScheme: "orange"},
+                                          {text: "Ford", action: ()=> dispatch(change_page("ford_main")), icon: FordIcon, colorScheme: "blue"}] },
+    
+    
+            toyota_main: {buttonConfigs: [{text: "Line 2", action: ()=> dispatch(change_page("line_page")), colorScheme: "red"},
+                                          {text: "Line 4", action: ()=> dispatch(change_page("line_page")), colorScheme: "red"} ]},
+    
+            lexus_main: {buttonConfigs: [{text: "Line 3", action: ()=> dispatch(change_page("line_page")), colorScheme: "orange"}, ]},
+            
+            ford_main: {buttonConfigs: [{text: "Line 6", action: ()=> dispatch(change_page("line_page")), colorScheme: "blue"}, ]},
+    
+            line_page: {buttonConfigs: [{text: "Control Plan", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
+                                        {text: "Error Proofing", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
+                                        {text: "Layout", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
+                                        {text: "PFMEA", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"}]},
+    
+    
+            kbs_page: { buttonConfigs: [ {text: "TPM", action: ()=> dispatch(change_page("tpm_page")), icon: InfoIcon, colorScheme: "green"},
+                                         {text: "Quality", action: () => dispatch(change_page("quality_page")), icon: CheckCircleIcon, colorScheme: "purple"},
+                                         {text: "Std Work", action: () => dispatch(change_page("quality_page")), icon: CheckCircleIcon, colorScheme: "pink"},
+                                         {text: "Plant Requirements", action: () => dispatch(change_page("quality_page")), icon: PlusSquareIcon, colorScheme: "green"} ],},
+    
+            quality_page: {documentCards: true},
+            
+            tpm_page: { buttonConfigs: [ {text: "2S", action: ()=> dispatch(change_page("two_s_page")), icon: CalendarIcon, colorScheme: "blue"}, {text: "Back", action: ()=> dispatch(change_page("kbs_page")), icon: RepeatIcon, colorScheme: "green" }, ] },
+            
+            two_s_page: { documentCards: true }
+        
+        }
+    
+    
+    },[dispatch]);
 
     //Every time the page is changed make a request to the server to get
     //the cards for this page
@@ -75,7 +115,7 @@ export default function Page()
         };
 
         //Render cards if it is a page that has them or an update has been raised
-        if(pageConfigs[page].documentCards || update_page)
+        if(pageConfigs[page].documentCards || update_page) 
         {
             populatePages();
             dispatch(set_update_page(false));
@@ -99,47 +139,9 @@ export default function Page()
         };
         */
 
-    }, [page, update_page]);
+    }, [page, update_page, pageConfigs, dispatch]);
 
 
-        
-    //Object that stores pages as other objects
-    //Button configs is an array of objects that represent the buttons(MenuButton)
-    //(Text, action, icon, and color scheme)
-    //documentCards is a flag to check if we should populate with cards
-    const pageConfigs = {
-        
-        home_page: { buttonConfigs: [ {text: "KBS", action: ()=> dispatch(change_page("kbs_page")), icon: CalendarIcon, colorScheme: "green"},
-                                      {text: "Toyota", action: ()=> dispatch(change_page("toyota_main")), icon: ToyotaIcon, colorScheme: "red"},
-                                      {text: "Lexus", action: ()=> dispatch(change_page("lexus_main")), icon: LexusIcon, colorScheme: "orange"},
-                                      {text: "Ford", action: ()=> dispatch(change_page("ford_main")), icon: FordIcon, colorScheme: "blue"}] },
-
-
-        toyota_main: {buttonConfigs: [{text: "Line 2", action: ()=> dispatch(change_page("line_page")), colorScheme: "red"},
-                                      {text: "Line 4", action: ()=> dispatch(change_page("line_page")), colorScheme: "red"} ]},
-
-        lexus_main: {buttonConfigs: [{text: "Line 3", action: ()=> dispatch(change_page("line_page")), colorScheme: "orange"}, ]},
-        
-        ford_main: {buttonConfigs: [{text: "Line 6", action: ()=> dispatch(change_page("line_page")), colorScheme: "blue"}, ]},
-
-        line_page: {buttonConfigs: [{text: "Control Plan", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
-                                    {text: "Error Proofing", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
-                                    {text: "Layout", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
-                                    {text: "PFMEA", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"}]},
-
-
-        kbs_page: { buttonConfigs: [ {text: "TPM", action: ()=> dispatch(change_page("tpm_page")), icon: InfoIcon, colorScheme: "green"},
-                                     {text: "Quality", action: () => dispatch(change_page("quality_page")), icon: CheckCircleIcon, colorScheme: "purple"},
-                                     {text: "Std Work", action: () => dispatch(change_page("quality_page")), icon: CheckCircleIcon, colorScheme: "pink"},
-                                     {text: "Plant Requirements", action: () => dispatch(change_page("quality_page")), icon: PlusSquareIcon, colorScheme: "green"} ],},
-
-        quality_page: {documentCards: true,},
-        
-        tpm_page: { buttonConfigs: [ {text: "2S", action: ()=> dispatch(change_page("two_s_page")), icon: CalendarIcon, colorScheme: "blue"}, {text: "Back", action: ()=> dispatch(change_page("kbs_page")), icon: RepeatIcon, colorScheme: "green" }, ] },
-        
-        two_s_page: { documentCards: true, }
-    
-    }
 
     
     //render the specific elements for that page if it has them

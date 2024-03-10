@@ -1,15 +1,14 @@
 import './UploadModal.css';
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { Button } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { update_form } from "./modalSlice";
 import { set_update_page } from '../Pages/pageSlice';
 import { set_loading } from './modeSlice';
-import io from 'socket.io-client';
+
 
 import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
-import {getFirestore, doc, updateDoc, arrayUnion, arrayRemove, getDoc} from "firebase/firestore";
+import {getFirestore, doc, updateDoc,getDoc} from "firebase/firestore";
 
 
 //Pretty much the "Upload" and the "Save" button paired 

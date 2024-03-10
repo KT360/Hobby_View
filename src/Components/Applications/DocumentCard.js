@@ -3,8 +3,8 @@
 //Add expandable/transitioning image
 //Add context menu to card -> Pop up -> Upload image
 import React from "react"
-import { Card, CardHeader, CardBody ,Flex, Avatar, Box, Heading, Text, IconButton, Image } from "@chakra-ui/react"
-import {HamburgerIcon, AddIcon, ExternalLinkIcon, EditIcon} from '@chakra-ui/icons'
+import { Card, CardHeader, CardBody ,Flex, Avatar, Box, Heading, Text, IconButton} from "@chakra-ui/react"
+import {HamburgerIcon,ExternalLinkIcon} from '@chakra-ui/icons'
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react"
 
 import { useDispatch } from "react-redux";
@@ -51,7 +51,7 @@ export default function DocumentCard({name, title, notes, imagePath, index , onO
                 {notes}
                 </Text>
             </CardBody>
-            <img src={imagePath}/>
+            <img src={imagePath} alt="hobby pic"/>
         </Card>
     )
 }
