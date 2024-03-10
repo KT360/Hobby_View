@@ -2,7 +2,7 @@ import React from "react";
 import MenuButton from "../Navigation/MenuButton";
 import {useDispatch, useSelector} from 'react-redux';
 import { change_page } from "../Window/windowSlice";
-import { CalendarIcon, RepeatIcon, AddIcon, InfoIcon, CheckCircleIcon } from "@chakra-ui/icons";
+import { CalendarIcon, RepeatIcon, AddIcon, InfoIcon, CheckCircleIcon , PlusSquareIcon} from "@chakra-ui/icons";
 import DocumentCard from "../Applications/DocumentCard";
 import { useEffect, useState } from "react";
 import axios from "axios";
