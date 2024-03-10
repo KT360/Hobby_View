@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import React from 'react';
 
 //(React Redux)
 //The "Window" component manages the current page state

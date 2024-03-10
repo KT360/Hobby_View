@@ -1,6 +1,4 @@
-import useState from 'react'
-import { useSelector, useDispatch } from 'react-redux';
-import { HStack, IconButton, Link, Flex, Heading, Center } from '@chakra-ui/react';
+import { HStack, IconButton, Link, Flex, Heading} from '@chakra-ui/react';
 import {useDisclosure, Box, Alert} from "@chakra-ui/react"
 import {HamburgerIcon, WarningIcon} from '@chakra-ui/icons'
 import Selector from '../Navigation/Selector';

@@ -1,11 +1,9 @@
 import React from "react";
-import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, ModalFooter, background } from "@chakra-ui/react";
+import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, ModalFooter} from "@chakra-ui/react";
 import './UploadModal.css'
 import UploadComponent from "./UploadComponent";
 import { useDispatch } from "react-redux";
 import { update_form } from "./modalSlice";
-import { useState } from "react";
-import { set_mode } from "./modeSlice";
 import { useSelector } from "react-redux";
 //Modal to handle form input, whe the "Upload button is clicked"
 //onChange={event => setEmail(event.currentTarget.value)}

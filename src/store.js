@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit';
-import React from 'react';
 import windowReducer from './Components/Window/windowSlice';
 import modalReducer from './Components/Uploading/modalSlice';
 import pageReducer from './Components/Pages/pageSlice';
