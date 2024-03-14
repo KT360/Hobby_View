@@ -17,6 +17,7 @@ import { getDoc, doc,collection, query, orderBy, onSnapshot, serverTimestamp, ad
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { format } from 'date-fns';
+import Heart from "../Applications/Heart";
 
 
 
@@ -78,7 +79,7 @@ export default function ViewModal({isOpen, onClose}){
         }
 
 
-    }, [isOpen]);
+    }, [isOpen, card.owner, cardID]);
 
     const fetchUserDetails = async (userId) => {
         const userRef = doc(db,'users', userId);
@@ -129,7 +130,7 @@ export default function ViewModal({isOpen, onClose}){
                                 {card.Description}
                             </Text>
                             <Image src={card.imagePath} alt='topic' />
-
+                            <Heart cardID={cardID}/>
 
                             <Textarea placeholder="Write your thoughts!" onChange={event => setCurrentComment(event.currentTarget.value)}></Textarea>
                             <Button leftIcon={<FcPlus/>} borderRadius={15} backgroundColor={"lightgreen"} onClick={addComment}>

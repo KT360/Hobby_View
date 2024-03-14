@@ -3,15 +3,17 @@ import MenuButton from "../Navigation/MenuButton";
 import {useDispatch, useSelector} from 'react-redux';
 import { change_page } from "../Window/windowSlice";
 import { update_form } from "../Uploading/modalSlice";
-import { CalendarIcon, RepeatIcon, AddIcon, InfoIcon, CheckCircleIcon , PlusSquareIcon} from "@chakra-ui/icons";
+import {RepeatIcon, AddIcon, InfoIcon, CheckCircleIcon , PlusSquareIcon} from "@chakra-ui/icons";
+import CAT from '../../../src/assets/nyan-cat-poptart-cat.gif'
 import DocumentCard from "../Applications/DocumentCard";
 
 
 import {ToyotaIcon} from '../brand_icons/ToyotaIcon'
-import { FordIcon } from "../brand_icons/FordIcon";
-import { LexusIcon } from "../brand_icons/LexusIcon";
+import { GameIcon } from "../General Icons/GameIcon";
+import { CalendarIcon } from "../General Icons/CalendarIcon";
 import { set_update_page } from "./pageSlice";
 import { Button, Icon,Spinner } from "@chakra-ui/react";
+import { Image } from "@chakra-ui/react";
 
 
 import UploadModal from "../Uploading/UploadModal"
@@ -49,35 +51,14 @@ export default function MainPage()
     //documentCards is a flag to check if we should populate with cards
     const pageConfigs = useMemo(() => { return{
         
-            home_page: { buttonConfigs: [ {text: "KBS", action: ()=> dispatch(change_page("kbs_page")), icon: CalendarIcon, colorScheme: "green"},
-                                          {text: "Toyota", action: ()=> dispatch(change_page("toyota_main")), icon: ToyotaIcon, colorScheme: "red"},
-                                          {text: "Lexus", action: ()=> dispatch(change_page("lexus_main")), icon: LexusIcon, colorScheme: "orange"},
-                                          {text: "Ford", action: ()=> dispatch(change_page("ford_main")), icon: FordIcon, colorScheme: "blue"}] },
+            home_page: { buttonConfigs: [ {text: "Vacation", action: ()=> dispatch(change_page("vacation_page")), icon: CalendarIcon, colorScheme: "teal", variant:"outline"},
+                                          {text: "Games", action: ()=> dispatch(change_page("games_page")), icon: GameIcon, colorScheme: "teal", variant:"outline"}] },
     
-    
-            toyota_main: {buttonConfigs: [{text: "Line 2", action: ()=> dispatch(change_page("line_page")), colorScheme: "red"},
-                                          {text: "Line 4", action: ()=> dispatch(change_page("line_page")), colorScheme: "red"} ]},
-    
-            lexus_main: {buttonConfigs: [{text: "Line 3", action: ()=> dispatch(change_page("line_page")), colorScheme: "orange"}, ]},
-            
-            ford_main: {buttonConfigs: [{text: "Line 6", action: ()=> dispatch(change_page("line_page")), colorScheme: "blue"}, ]},
-    
-            line_page: {buttonConfigs: [{text: "Control Plan", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
-                                        {text: "Error Proofing", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
-                                        {text: "Layout", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"},
-                                        {text: "PFMEA", action: ()=> dispatch(change_page("home_page")), colorScheme: "cyan"}]},
-    
-    
-            kbs_page: { buttonConfigs: [ {text: "TPM", action: ()=> dispatch(change_page("tpm_page")), icon: InfoIcon, colorScheme: "green"},
-                                         {text: "Quality", action: () => dispatch(change_page("quality_page")), icon: CheckCircleIcon, colorScheme: "purple"},
-                                         {text: "Std Work", action: () => dispatch(change_page("quality_page")), icon: CheckCircleIcon, colorScheme: "pink"},
-                                         {text: "Plant Requirements", action: () => dispatch(change_page("quality_page")), icon: PlusSquareIcon, colorScheme: "green"} ],},
-    
-            quality_page: {documentCards: true},
-            
-            tpm_page: { buttonConfigs: [ {text: "2S", action: ()=> dispatch(change_page("two_s_page")), icon: CalendarIcon, colorScheme: "blue"}, {text: "Back", action: ()=> dispatch(change_page("kbs_page")), icon: RepeatIcon, colorScheme: "green" }, ] },
-            
-            two_s_page: { documentCards: true }
+            vacation_page: { buttonConfigs: [ {text: "Canada", action: ()=> dispatch(change_page("canada_vacations")), icon: CalendarIcon, colorScheme: "red"} ] },
+
+            canada_vacations: {documentCards:true},
+
+            games_page: {documentCards:true}
         
         }
     
@@ -165,10 +146,14 @@ export default function MainPage()
             <DocumentCard key={index} onOpen={onViewOpen} {...config}></DocumentCard>
             ): null}
 
-            {pageConfigs[page].documentCards? <Button position={"absolute"} right={"20px"} bottom={"20px"} onClick={()=>{onUploadOpen()}}><Icon as={AddIcon} boxSize={5}/></Button>: null}
+            {pageConfigs[page].documentCards? <Button position={"fixed"} bg={"#74d1a6"} color={"white"} right={"20px"} bottom={"20px"} onClick={()=>{onUploadOpen()}}><Icon as={AddIcon} boxSize={5}/></Button>: null}
 
             <UploadModal handleOpen={isUploadOpen} handleClose={onUploadClose}/>
             <ViewModal isOpen={isViewOpen} onClose={onViewClose} />
+
+
+            <Image src={CAT} style={{position:"fixed", left:"0px", bottom:"5px", width:"75px", height:"75px"}} alt={"el gato"}></Image>
+
         </>
     )
 }

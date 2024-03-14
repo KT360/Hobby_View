@@ -9,7 +9,7 @@ export default function Selector()
     //<Navbutton Icon={<CalendarIcon></CalendarIcon>} text={'Page 2'} page_number={1}></Navbutton>
 
     return(
-        <div style={{color: "Green"}}>
+        <div>
             <Navbutton Icon={<EditIcon></EditIcon>} text={'Home Page'} page_name={"home_page"}></Navbutton>
            
         </div>

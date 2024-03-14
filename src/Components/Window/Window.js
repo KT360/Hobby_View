@@ -9,6 +9,10 @@ import Navbutton from '../Navigation/Navbutton';
 import {FcTreeStructure} from 'react-icons/fc'
 import { Icon } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
+import { MainIcon } from '../General Icons/MainIcon';
+import { Text } from '@chakra-ui/react';
+import { EditIcon } from '@chakra-ui/icons';
+import { FaHome } from 'react-icons/fa';
 
 //Main window
 //A container for all the main UI components like the drawer
@@ -23,7 +27,7 @@ export default function Window()
 
     return(
         <>
-            <Box bg={"green"}
+            <Box bg={"white"}
             px={4}
             position={"sticky"}
             top={0}
@@ -54,19 +58,19 @@ export default function Window()
                                     </Box>
                                 </DrawerHeader>
                                 <DrawerBody>
-                                    <Navbutton bgColor='#9cf7c7' variant='outline' text={"Toyota"} page_name={"toyota_main"}/>
-                                    <Navbutton bgColor='#9cf7c7' variant='outline' text={"Lexus"} page_name={"lexus_main"}/>
-                                    <Navbutton bgColor='#9cf7c7' variant='outline' text={"Ford"} page_name={"ford_main"}/>
+                                    <Navbutton color="white" width="100%" bgColor='#84d6b0' variant='outline' text={"Games"} page_name={"games_page"}/>
+                                    <Navbutton color="white" width="100%" bgColor='#84d6b0' variant='outline' text={"Vacation"} page_name={"vacation_page"}/>
                                 </DrawerBody>
                                 <DrawerFooter fontSize={12} justifyContent={'left'}>{version_string}</DrawerFooter>
                             </DrawerContent>
                         </Drawer>
 
-                        <Heading as={Link} to={"/"} fontWeight={"normal"} size={"md"}>
-                            KBS Board
+                        <MainIcon />
+                        <Heading  fontWeight={"bold"} size={"md"}>
+                            InstaCard
                         </Heading>
                     </HStack>
-                    {user.name ? <Selector key={'selID'}></Selector> : null}
+                    {user.name ? <Navbutton Icon={<FaHome />} text={'Home Page'} page_name={"home_page"}></Navbutton> : null}
                 </Flex>
 
             </Box>
@@ -74,7 +78,7 @@ export default function Window()
                 <WarningIcon marginRight={5}/>
                 {"Alpha version: 0.0.3 (Base Layout), signed in as: "+user.name}
             </Alert>           
-            <Box>
+            <Box bg={"#edf0ee"} height={"100%"} overflow={"scroll"}>
                 {user.name ? <MainPage></MainPage> : <LoginPage></LoginPage>}
             </Box>
         </>
