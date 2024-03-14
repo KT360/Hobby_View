@@ -1,17 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-
 //(React Redux)
 //The "Window" component manages the current page state
 //updates it and returns the updated value for use
-export const modalSlice = createSlice({
-    name: 'modal',
+export const userSlice = createSlice({
+    name: 'CurrentUser',
     initialState: {
-        value: { notes:""},
+        value: {name: "", uid:""},
     },
 
     reducers: {
-        update_form: (state, action) =>
+        set_user: (state, action) =>
         { 
 
             const newState =  {
@@ -21,8 +20,7 @@ export const modalSlice = createSlice({
                     ...action.payload
                 } ,
             };
-
-            console.log("New state: "+ JSON.stringify(newState));
+            
             return newState;
         }
                
@@ -30,6 +28,6 @@ export const modalSlice = createSlice({
 
 })
 
-export const {update_form} = modalSlice.actions;
+export const {set_user} = userSlice.actions;
 
-export default modalSlice.reducer
+export default userSlice.reducer

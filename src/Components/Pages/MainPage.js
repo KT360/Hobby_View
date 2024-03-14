@@ -2,6 +2,7 @@ import React, {useMemo,useEffect, useState } from "react";
 import MenuButton from "../Navigation/MenuButton";
 import {useDispatch, useSelector} from 'react-redux';
 import { change_page } from "../Window/windowSlice";
+import { update_form } from "../Uploading/modalSlice";
 import { CalendarIcon, RepeatIcon, AddIcon, InfoIcon, CheckCircleIcon , PlusSquareIcon} from "@chakra-ui/icons";
 import DocumentCard from "../Applications/DocumentCard";
 
@@ -14,18 +15,11 @@ import { Button, Icon,Spinner } from "@chakra-ui/react";
 
 
 import UploadModal from "../Uploading/UploadModal"
+import ViewModal from "../Viewing/ViewModal";
 import {useDisclosure} from "@chakra-ui/react"
-import firebaseConfig from "../../helpers/apiKeys";
 
-import { initializeApp } from "firebase/app";
-import {getFirestore, getDoc, doc} from "firebase/firestore"
-
-
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
+import {getDocs, doc, query, where, collection} from "firebase/firestore"
+import { db } from "../../helpers/firebase_init";
 
 
 // Connect to the server
@@ -36,18 +30,18 @@ const db = getFirestore(app);
 
 //Dynamic component that renders the current page from a list of pages(pageConfigs)
 //Takes those elements, and renders them
-export default function Page()
+export default function MainPage()
 {
 
     const update_page = useSelector((state) => state.update_page.value);
     const page = useSelector((state) => state.window.value);
-    const modal = useSelector((state) => state.modal.value);
     const loading = useSelector((state) => state.loading.value);
     const dispatch = useDispatch();
     const [cards, setCards] = useState([]);
 
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isUploadOpen, onOpen: onUploadOpen, onClose:onUploadClose } = useDisclosure();
+    const {isOpen: isViewOpen, onOpen: onViewOpen, onClose: onViewClose} = useDisclosure();
 
             //Object that stores pages as other objects
     //Button configs is an array of objects that represent the buttons(MenuButton)
@@ -93,21 +87,25 @@ export default function Page()
     //Every time the page is changed make a request to the server to get
     //the cards for this page
     useEffect(() => {
-        const populatePages = async ()=>
+        const fetchCards = async ()=>
         {
 
             try{
-                const docRef = doc(db, "BlogData", "pages")
-                const docSnap = await getDoc(docRef)
+                //Reference collection
+                const cardsRef = collection(db, "Cards");
+                //Create query
+                const q = query(cardsRef, where('page', '==', page));
 
-                if(docSnap.exists())
-                {
-                    console.log("New cards data: "+JSON.stringify(docSnap.data()[page],null,2));
-                    setCards(docSnap.data()[page])
-                }else
-                {
-                    console.log("No such document!")
-                }
+                //Execute query
+                const querySnapshot = await getDocs(q);
+                const fetchedCards = [];
+
+                querySnapshot.forEach(doc => {
+                    fetchedCards.push({id:doc.id, ...doc.data()})
+                });
+
+                setCards(fetchedCards);
+
             } catch (error)
             {
                 console.error('error fetching cards', error)
@@ -117,7 +115,7 @@ export default function Page()
         //Render cards if it is a page that has them or an update has been raised
         if(pageConfigs[page].documentCards || update_page) 
         {
-            populatePages();
+            fetchCards();
             dispatch(set_update_page(false));
         }
 
@@ -142,13 +140,12 @@ export default function Page()
     }, [page, update_page, pageConfigs, dispatch]);
 
 
-
     
     //render the specific elements for that page if it has them
     return(
         <>
 
-            {loading ? <div style={{backgroundColor:"rgba(214, 217, 232, 0.35)", zIndex:10,height:"100%", width:"100%" ,position:"absolute", display:"flex", alignItems:"center", justifyContent:"center"}}>
+            {loading ? <div style={{backgroundColor:"rgba(214, 217, 232, 0.35)", zIndex:2000,height:"100%", width:"100%" ,position:"absolute", display:"flex", alignItems:"center", justifyContent:"center"}}>
                 <Spinner
                 thickness='4px'
                 speed='0.65s'
@@ -165,12 +162,13 @@ export default function Page()
             )}
             
             {pageConfigs[page].documentCards? cards?.map((config, index) => 
-            <DocumentCard key={index} onOpen={onOpen} {...config}></DocumentCard>
+            <DocumentCard key={index} onOpen={onViewOpen} {...config}></DocumentCard>
             ): null}
 
-            {pageConfigs[page].documentCards? <Button position={"absolute"} right={"20px"} bottom={"20px"}><Icon as={AddIcon} boxSize={5}/></Button>: null}
+            {pageConfigs[page].documentCards? <Button position={"absolute"} right={"20px"} bottom={"20px"} onClick={()=>{onUploadOpen()}}><Icon as={AddIcon} boxSize={5}/></Button>: null}
 
-            <UploadModal index={modal.index} handleOpen={isOpen} handleClose={onClose}/>
+            <UploadModal handleOpen={isUploadOpen} handleClose={onUploadClose}/>
+            <ViewModal isOpen={isViewOpen} onClose={onViewClose} />
         </>
     )
 }
