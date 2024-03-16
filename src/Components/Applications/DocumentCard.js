@@ -38,10 +38,24 @@ export default function DocumentCard({name,Description, imagePath, index , onOpe
 
         const getUser = async ()=> {
 
-            const userRef = doc(db, 'users', user.uid);
-            const userSnap = await getDoc(userRef);
+            const cardRef = doc(db, 'Cards', id);
+            const cardSnap = await getDoc(cardRef);
 
-            setOwner(userSnap.data().name);
+            if(cardSnap.exists())
+            {
+                const Card = cardSnap.data();
+
+                const userRef = doc(db,'users',Card.owner);
+                const userSnap = await  getDoc(userRef);
+
+                if(userSnap.exists())
+                {
+                    const cardOwner = userSnap.data();
+                    setOwner(cardOwner.name);
+                }
+
+
+            }
 
             const q1 = query(collection(db, `Cards/${id}/Likes`));
             const snap1 = await getDocs(q1);
