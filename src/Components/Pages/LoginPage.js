@@ -53,7 +53,7 @@ export default function LoginPage(){
         const provider = new GoogleAuthProvider();
         signInWithPopup(auth, provider)
         .then((result) => {
-            
+
             const user = result.user;
 
             checkForUser(user);
@@ -72,7 +72,7 @@ export default function LoginPage(){
             <div style={{textAlign:"center", fontFamily:"roboto", margin:"auto", height:"40%", fontSize:"12em"}}>
                 Hi there.
             </div>
-            <Button rightIcon={<FcGoogle size={40}/>}  onClick={() => signInWithGoogle()} margin={"auto"} width={"30%"} height={"20%"}>Login with google</Button>
+            <Button color={"white"} rightIcon={<FcGoogle size={40}/>}  onClick={() => signInWithGoogle()} margin={"auto"} width={"30%"} height={"20%"}>Login with google</Button>
         </div>
     
     </>
