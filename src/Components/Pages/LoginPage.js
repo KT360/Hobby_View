@@ -72,7 +72,7 @@ export default function LoginPage(){
             <div style={{textAlign:"center", fontFamily:"roboto", margin:"auto", height:"40%", fontSize:"12em"}}>
                 Hi there.
             </div>
-            <Button color={"white"} rightIcon={<FcGoogle size={40}/>}  onClick={() => signInWithGoogle()} margin={"auto"} width={"30%"} height={"20%"}>Login with google</Button>
+            <Button backgroundColor={"white"} rightIcon={<FcGoogle size={40}/>}  onClick={() => signInWithGoogle()} margin={"auto"} width={"30%"} height={"20%"}>Login with google</Button>
         </div>
     
     </>
