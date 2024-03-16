@@ -1,7 +1,7 @@
-import { HStack, IconButton, Link, Flex, Heading} from '@chakra-ui/react';
+import { HStack, IconButton,  Flex, Heading} from '@chakra-ui/react';
 import {useDisclosure, Box, Alert} from "@chakra-ui/react"
 import {HamburgerIcon, WarningIcon} from '@chakra-ui/icons'
-import Selector from '../Navigation/Selector';
+
 import MainPage from '../Pages/MainPage';
 import LoginPage from '../Pages/LoginPage';
 import { Drawer, DrawerOverlay, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter } from '@chakra-ui/react';
@@ -10,8 +10,6 @@ import {FcTreeStructure} from 'react-icons/fc'
 import { Icon } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { MainIcon } from '../General Icons/MainIcon';
-import { Text } from '@chakra-ui/react';
-import { EditIcon } from '@chakra-ui/icons';
 import { FaHome } from 'react-icons/fa';
 
 //Main window
@@ -70,13 +68,13 @@ export default function Window()
                             InstaCard
                         </Heading>
                     </HStack>
-                    {user.name ? <Navbutton Icon={<FaHome />} text={'Home Page'} page_name={"home_page"}></Navbutton> : null}
+                    {user.name ? <Navbutton icon={<FaHome />} text={'Home Page'} page_name={"home_page"}></Navbutton> : null}
                 </Flex>
 
             </Box>
             <Alert status='info' alignContent={"center"}>
                 <WarningIcon marginRight={5}/>
-                {"Alpha version: 0.0.3 (Base Layout), signed in as: "+user.name}
+                {"Beta version: 1.02 (Base Layout), signed in as: "+user.name}
             </Alert>           
             <Box bg={"#edf0ee"} height={"100%"} overflow={"scroll"}>
                 {user.name ? <MainPage></MainPage> : <LoginPage></LoginPage>}

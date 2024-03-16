@@ -1,18 +1,17 @@
 import React from "react";
 import {FaHeart, FaRegHeart} from 'react-icons/fa';
-import { useEffect, useState } from "react";
 import { collection, query } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { db } from "../../helpers/firebase_init";
 import { where, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
 
 
-export default function Heart({cardID})
+export default function Heart({cardID, isLiked ,updateCallBack})
 {
 
-    const [liked, setLiked] = useState(false);
     const user = useSelector((state) => state.CurrentUser.value);
 
+    /*
     useEffect(() => {
 
         const checkIfLiked = async () => {
@@ -24,7 +23,10 @@ export default function Heart({cardID})
 
         checkIfLiked();
 
+        console.log("I should change");
+
     }, [cardID]);
+    */
     
     const likePost = async () => {
 
@@ -35,7 +37,7 @@ export default function Heart({cardID})
         };
     
         addDoc(userRef, userData)
-        .then(() => {console.log("like!")})
+        .then(() => {console.log("like!"); updateCallBack()})
         .catch((error) => console.error("Error trying to like the card :( : ",error));
     }
 
@@ -48,7 +50,7 @@ export default function Heart({cardID})
         querySnapshot.forEach((document) => {
             const docRef = doc(db, `Cards/${cardID}/Likes`, document.id);
             deleteDoc(docRef)
-            .then(() => {console.log("unliked :(")})
+            .then(() => {console.log("unliked :("); updateCallBack()})
             .catch((error) => console.error("Error trying to not like :/ : ",error));
         });
     }
@@ -56,9 +58,9 @@ export default function Heart({cardID})
     
 
     return(
-        <button onClick={() => setLiked(!liked)}
+        <button onClick={(e) => {e.stopPropagation();}}
         style={{background:"transparent", border:"none", cursor:"pointer"}}>
-            {liked ? <FaHeart color="red" onClick={unlikePost} /> : <FaRegHeart onClick={likePost}/>}
+            {isLiked ? <FaHeart color="red" onClick={unlikePost} /> : <FaRegHeart onClick={likePost}/>}
         </button>
     )
 }

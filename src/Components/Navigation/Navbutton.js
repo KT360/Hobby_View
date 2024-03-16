@@ -12,7 +12,7 @@ export default function Navbutton(props)
 
     return(
 
-        <Button width={props.width} leftIcon={props.Icon} onClick={() => dispatch(change_page(props.page_name))} {...props}>{props.text}</Button>
+        <Button width={props.width} leftIcon={props.icon} onClick={() => dispatch(change_page(props.page_name))} {...props}>{props.text}</Button>
 
     );
 }

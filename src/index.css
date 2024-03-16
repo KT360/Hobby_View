@@ -13,7 +13,9 @@ code {
     monospace;
 }
 
-
+.smieIcon:hover{
+  color:white
+}
 
 html, body, #root,#app, #app>div {
   height: 100%

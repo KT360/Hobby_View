@@ -13,25 +13,36 @@ import { Button } from "@chakra-ui/react";
 import { FcPlus } from "react-icons/fc";
 import { Flex,Avatar,Box,Heading,Text,Image,VStack} from "@chakra-ui/react";
 import { db } from "../../helpers/firebase_init";
-import { getDoc, doc,collection, query, orderBy, onSnapshot, serverTimestamp, addDoc } from "firebase/firestore";
+import { getDoc, doc,collection, query, orderBy, onSnapshot, serverTimestamp, addDoc, where, getDocs } from "firebase/firestore";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { format } from 'date-fns';
+import { set_update_page } from "../Pages/pageSlice";
+import EmojiPicker from "emoji-picker-react";
+import { FaSmile } from "react-icons/fa";
 import Heart from "../Applications/Heart";
 
 
+//Some of this stuff was simplified for the sake of practice, but alot of the querying might be SUPER inefficient ex: re-rendering everything on like
 
 export default function ViewModal({isOpen, onClose}){
 
     const cardID = useSelector((state) => state.selected.value);
     const currentUser = useSelector((state) => state.CurrentUser.value);
+    const update = useSelector((state) => state.update_page.value);
+
+    const dispatch = useDispatch();
+
     const [comments, setComments] = useState(null);
     const [card, setCard] = useState({Description:"", imagePath:"",owner:"",page:""});
     const [cardOwner, setCardOwner] = useState({name:"", uid:""});
     const [currentComment, setCurrentComment] = useState("");
+    const [currentlyLiked, setCurrentlyLiked] = useState(false);
+    const [reactionOpen, setReactionOpen] = useState(false);
 
     useEffect(() =>{
 
+        setReactionOpen(false);
 
         if(isOpen)
         {
@@ -42,26 +53,36 @@ export default function ViewModal({isOpen, onClose}){
                 const cardRef = doc(db, 'Cards', cardID);
                 const cardSnap = await getDoc(cardRef);
     
-                setCard(cardSnap.data());
+                if(cardSnap.exists())
+                {
+                    setCard(cardSnap.data());
 
-                const ownerRef = doc(db,'users',card.owner);
-                const ownerSnap = await getDoc(ownerRef);
+                    if(card.owner)
+                    {
+                        const ownerRef = doc(db,'users',card.owner);
+                        const ownerSnap = await getDoc(ownerRef);
 
-                setCardOwner(ownerSnap.data());
+                        if(ownerSnap.exists())
+                        {
+                            setCardOwner(ownerSnap.data());
+                        }
+                    }
+                }
+
             };
     
 
             const getCommentData = async () => {
 
                 const commentsRef = collection(db, `Cards/${cardID}/Comments`);
-                const q = query(commentsRef, orderBy("createdAt"));
+                const q = query(commentsRef, orderBy("createdAt","desc"));
         
                 unsubscribe =  onSnapshot(q,  async (querySnapshot)=> {
                     
                     const commentPromises = querySnapshot.docs.map( async (doc) => {
                         const commentData = {id: doc.id, ...doc.data()};
                         const userDetails = await fetchUserDetails(commentData.owner);
-                        return {...commentData, ownerName: userDetails ? userDetails.name : "Uknown", displayDate: commentData ? format(commentData.createdAt.toDate(), 'MMMM dd, yyyy HH:mm') : "Uknown date"};
+                        return {...commentData, ownerName: userDetails ? userDetails.name : "Uknown", displayDate: commentData.createdAt ? format(commentData.createdAt.toDate(), 'MMMM dd, yyyy HH:mm') : "Uknown date"};
 
                     });
                     
@@ -70,16 +91,26 @@ export default function ViewModal({isOpen, onClose}){
                     setComments(newComments);
                 });
             }
+
+            const checkIfLiked = async () => {
+                const q = query(collection(db, `Cards/${cardID}/Likes`), where("uid","==",currentUser.uid));
+                const querySnapshot = await getDocs(q);
+                setCurrentlyLiked(!querySnapshot.empty);
+            };
     
+    
+            checkIfLiked();
             getCardData();
             getCommentData();
+
+            console.log("rendered!")
     
             return () => unsubscribe();
 
         }
 
 
-    }, [isOpen, card.owner, cardID]);
+    }, [isOpen, card.owner, cardID, currentUser.uid, update]);
 
     const fetchUserDetails = async (userId) => {
         const userRef = doc(db,'users', userId);
@@ -95,18 +126,22 @@ export default function ViewModal({isOpen, onClose}){
     }
 
     const addComment = ()=> {
-        
-        const commentsRef = collection(db, `Cards/${cardID}/Comments`);
 
-        const commentData = {
-        owner: currentUser.uid,
-        text:currentComment,
-        createdAt:serverTimestamp()
-        };
+        const check = currentComment.replace(/\s+/g, '');
+        if(check !== "")
+        {
+            const commentsRef = collection(db, `Cards/${cardID}/Comments`);
 
-        addDoc(commentsRef, commentData)
-        .then(() => {console.log("Comment added")})
-        .catch((error) => console.error("Error adding comment: ",error));
+            const commentData = {
+            owner: currentUser.uid,
+            text:currentComment,
+            createdAt:serverTimestamp()
+            };
+    
+            addDoc(commentsRef, commentData)
+            .then(() => {console.log("Comment added")})
+            .catch((error) => console.error("Error adding comment: ",error));
+        }
     }
 
 
@@ -130,9 +165,18 @@ export default function ViewModal({isOpen, onClose}){
                                 {card.Description}
                             </Text>
                             <Image src={card.imagePath} alt='topic' />
-                            <Heart cardID={cardID}/>
+                            <div style={{alignItems:"start", width:"100%"}}>
+                                <Heart cardID={cardID} isLiked={currentlyLiked} updateCallBack={()=>{dispatch(set_update_page(!update))}}/>
+                            </div>
 
-                            <Textarea placeholder="Write your thoughts!" onChange={event => setCurrentComment(event.currentTarget.value)}></Textarea>
+                            <div>
+                                <Textarea width={"600px"} placeholder="Write your thoughts!" onChange={event => setCurrentComment(event.currentTarget.value)} value={currentComment}></Textarea>
+              
+                                <FaSmile style={{position:"relative", bottom:"30px", left:"2px", cursor:"pointer", zIndex:"5"}} onClick={() => {setReactionOpen(!reactionOpen)}} size={25} />
+    
+                                <EmojiPicker open={reactionOpen} style={{position:"relative", top:"0px"}} onEmojiClick={(emoji,e) => {setCurrentComment(currentComment+emoji.emoji)}} />
+                            </div>
+
                             <Button leftIcon={<FcPlus/>} borderRadius={15} backgroundColor={"lightgreen"} onClick={addComment}>
                                 Add a Comment
                             </Button>
@@ -162,6 +206,7 @@ export default function ViewModal({isOpen, onClose}){
                                         ))}
                                     </VStack>
                                 </Box>
+
 
                                 :
 

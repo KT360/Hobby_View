@@ -2,13 +2,13 @@ import React, {useMemo,useEffect, useState } from "react";
 import MenuButton from "../Navigation/MenuButton";
 import {useDispatch, useSelector} from 'react-redux';
 import { change_page } from "../Window/windowSlice";
-import { update_form } from "../Uploading/modalSlice";
-import {RepeatIcon, AddIcon, InfoIcon, CheckCircleIcon , PlusSquareIcon} from "@chakra-ui/icons";
+
+import { AddIcon} from "@chakra-ui/icons";
 import CAT from '../../../src/assets/nyan-cat-poptart-cat.gif'
 import DocumentCard from "../Applications/DocumentCard";
 
 
-import {ToyotaIcon} from '../brand_icons/ToyotaIcon'
+
 import { GameIcon } from "../General Icons/GameIcon";
 import { CalendarIcon } from "../General Icons/CalendarIcon";
 import { set_update_page } from "./pageSlice";
@@ -20,7 +20,7 @@ import UploadModal from "../Uploading/UploadModal"
 import ViewModal from "../Viewing/ViewModal";
 import {useDisclosure} from "@chakra-ui/react"
 
-import {getDocs, doc, query, where, collection} from "firebase/firestore"
+import {getDocs, query, where, collection} from "firebase/firestore"
 import { db } from "../../helpers/firebase_init";
 
 
@@ -54,7 +54,7 @@ export default function MainPage()
             home_page: { buttonConfigs: [ {text: "Vacation", action: ()=> dispatch(change_page("vacation_page")), icon: CalendarIcon, colorScheme: "teal", variant:"outline"},
                                           {text: "Games", action: ()=> dispatch(change_page("games_page")), icon: GameIcon, colorScheme: "teal", variant:"outline"}] },
     
-            vacation_page: { buttonConfigs: [ {text: "Canada", action: ()=> dispatch(change_page("canada_vacations")), icon: CalendarIcon, colorScheme: "red"} ] },
+            vacation_page: { buttonConfigs: [ {text: "Canada", action: ()=> dispatch(change_page("canada_vacations")), icon: CalendarIcon, colorScheme: "red"} ]},
 
             canada_vacations: {documentCards:true},
 
@@ -87,6 +87,8 @@ export default function MainPage()
 
                 setCards(fetchedCards);
 
+                //console.log("Cards fetched: "+JSON.stringify(fetchedCards));
+
             } catch (error)
             {
                 console.error('error fetching cards', error)
@@ -94,7 +96,7 @@ export default function MainPage()
         };
 
         //Render cards if it is a page that has them or an update has been raised
-        if(pageConfigs[page].documentCards || update_page) 
+        if(pageConfigs[page].documentCards) 
         {
             fetchCards();
             dispatch(set_update_page(false));
@@ -143,7 +145,7 @@ export default function MainPage()
             )}
             
             {pageConfigs[page].documentCards? cards?.map((config, index) => 
-            <DocumentCard key={index} onOpen={onViewOpen} {...config}></DocumentCard>
+            <DocumentCard key={config.id} onOpen={onViewOpen} {...config}></DocumentCard>
             ): null}
 
             {pageConfigs[page].documentCards? <Button position={"fixed"} bg={"#74d1a6"} color={"white"} right={"20px"} bottom={"20px"} onClick={()=>{onUploadOpen()}}><Icon as={AddIcon} boxSize={5}/></Button>: null}

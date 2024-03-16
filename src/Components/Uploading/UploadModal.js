@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, Input, ModalFooter} from "@chakra-ui/react";
+import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, FormControl, FormLabel, ModalFooter} from "@chakra-ui/react";
 import './UploadModal.css'
 import { useDispatch, useSelector } from "react-redux";
 import { update_form } from "./modalSlice";
@@ -14,7 +14,7 @@ import { collection , addDoc} from "firebase/firestore";
 
 
 import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
-import {getFirestore, doc, updateDoc,getDoc} from "firebase/firestore";
+
 
 
 //Modal to handle form input, whe the "Upload button is clicked"
@@ -26,6 +26,7 @@ export default function UploadModal({handleOpen, handleClose, index})
   const modal = useSelector((state)=> state.modal.value);
   const page = useSelector((state) => state.window.value);
   const user = useSelector((state) =>  state.CurrentUser.value);
+  const update = useSelector((state) => state.update_page.value);
   const [previewImage, setPreview] = useState(null);
   const [uploadFile, setUploadFile] = useState(null);
 
@@ -106,7 +107,7 @@ export default function UploadModal({handleOpen, handleClose, index})
     await handleUpload();
     handleClose();
     dispatch(set_loading(false));
-    dispatch(set_update_page(true));
+    dispatch(set_update_page(!update));
   };
 
 
@@ -133,6 +134,10 @@ export default function UploadModal({handleOpen, handleClose, index})
             alignItems:"center", justifyContent:"center", display:"flex", 
             flexDirection:"column"}}>
               <Image src={previewImage} alt="placeholder"></Image>
+              <label id="file-input" style={{ marginRight: 8, border: "1px solid #ccc", display: "inline-block", padding: "6px 12px", cursor: "pointer", background: "grey"}}>
+                <input type="file" accept='image/*' onChange={handleImageChange} />
+                    Upload
+              </label>
             </div>
 
             :

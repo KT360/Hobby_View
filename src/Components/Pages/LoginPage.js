@@ -6,14 +6,10 @@ import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "firebas
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import { set_user } from "../userSlice";
-import { update_form } from "../Uploading/modalSlice";
-import { useState } from "react";
-import { useSelector } from "react-redux";
 
 export default function LoginPage(){
 
     const dispatch = useDispatch();
-    const logedIn = useSelector((state) => state.CurrentUser.value);
 
 
     const checkForUser = async (newLogIn) =>{
@@ -57,10 +53,7 @@ export default function LoginPage(){
         const provider = new GoogleAuthProvider();
         signInWithPopup(auth, provider)
         .then((result) => {
-            // This gives you a Google Access Token. You can use it to access Google APIs.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
-
+            
             const user = result.user;
 
             checkForUser(user);
