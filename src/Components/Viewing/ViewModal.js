@@ -24,7 +24,6 @@ import Heart from "../Applications/Heart";
 
 
 //Some of this stuff was simplified for the sake of practice, but alot of the querying might be SUPER inefficient ex: re-rendering everything on like
-
 export default function ViewModal({isOpen, onClose}){
 
     const cardID = useSelector((state) => state.selected.value);
@@ -40,14 +39,17 @@ export default function ViewModal({isOpen, onClose}){
     const [currentlyLiked, setCurrentlyLiked] = useState(false);
     const [reactionOpen, setReactionOpen] = useState(false);
 
+
     useEffect(() =>{
 
+        //The emoji component is slow, on mount so got to have it closed first
         setReactionOpen(false);
 
         if(isOpen)
         {
             let unsubscribe =  () => {};
 
+            //Get the selected post (global state: cardID), the get the data of the post's owner
             const getCardData = async () => {
 
                 const cardRef = doc(db, 'Cards', cardID);
@@ -71,12 +73,15 @@ export default function ViewModal({isOpen, onClose}){
 
             };
     
-
+            
             const getCommentData = async () => {
 
+                //Get comment docs, order by most recent
                 const commentsRef = collection(db, `Cards/${cardID}/Comments`);
                 const q = query(commentsRef, orderBy("createdAt","desc"));
         
+                //When query snapshot from 'q' becomes available, get each individual comment as well as the comment's owner
+                //return an array with all the data relevant to each comment
                 unsubscribe =  onSnapshot(q,  async (querySnapshot)=> {
                     
                     const commentPromises = querySnapshot.docs.map( async (doc) => {
@@ -86,8 +91,9 @@ export default function ViewModal({isOpen, onClose}){
 
                     });
                     
+                    //Wait till all of the comments are fetched and processed
                     const newComments = await Promise.all(commentPromises);
-        
+                    //set state
                     setComments(newComments);
                 });
             }
@@ -112,6 +118,8 @@ export default function ViewModal({isOpen, onClose}){
 
     }, [isOpen, card.owner, cardID, currentUser.uid, update]);
 
+
+
     const fetchUserDetails = async (userId) => {
         const userRef = doc(db,'users', userId);
         const userSnap = await getDoc(userRef);
@@ -125,6 +133,8 @@ export default function ViewModal({isOpen, onClose}){
         }
     }
 
+    //Add comment to the card's collection
+    //truncate all empty space to avoid submitting blank comments
     const addComment = ()=> {
 
         const check = currentComment.replace(/\s+/g, '');

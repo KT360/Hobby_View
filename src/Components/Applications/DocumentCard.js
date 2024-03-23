@@ -16,6 +16,7 @@ import { set_update_page } from "../Pages/pageSlice";
 
 
 //Card to display data fetched from the server
+//Gets data from MainPage.js i.e name, desc, etc....
 export default function DocumentCard({name,Description, imagePath, index , onOpen, id,...props})
 {
 
@@ -33,9 +34,10 @@ export default function DocumentCard({name,Description, imagePath, index , onOpe
     const page = useSelector((state) => state.window.value);
     const update = useSelector((state) => state.update_page.value);
 
-
     useEffect(() => {
 
+        //First get the card ID from collection given id
+        //Then lookup the owner's uid to get their name
         const getUser = async ()=> {
 
             const cardRef = doc(db, 'Cards', id);
@@ -57,6 +59,7 @@ export default function DocumentCard({name,Description, imagePath, index , onOpe
 
             }
 
+            //Count the number of uids present in "Likes" and "Comments"
             const q1 = query(collection(db, `Cards/${id}/Likes`));
             const snap1 = await getDocs(q1);
 
@@ -68,6 +71,7 @@ export default function DocumentCard({name,Description, imagePath, index , onOpe
             setCommentNumb(snap2.size);
         };
 
+        //Check If the current user's uid is present in the "Likes" collection
         const checkIfLiked = async () => {
             const q = query(collection(db, `Cards/${id}/Likes`), where("uid","==",user.uid));
             const querySnapshot = await getDocs(q);

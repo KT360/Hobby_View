@@ -5,29 +5,13 @@ import { useSelector } from "react-redux";
 import { db } from "../../helpers/firebase_init";
 import { where, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
 
-
+//Heart component gets it's state from the parent, makes refresh easier
 export default function Heart({cardID, isLiked ,updateCallBack})
 {
 
     const user = useSelector((state) => state.CurrentUser.value);
-
-    /*
-    useEffect(() => {
-
-        const checkIfLiked = async () => {
-            const q = query(collection(db, `Cards/${cardID}/Likes`), where("uid","==",user.uid));
-            const querySnapshot = await getDocs(q);
-
-            setLiked(!querySnapshot.empty);
-        };
-
-        checkIfLiked();
-
-        console.log("I should change");
-
-    }, [cardID]);
-    */
     
+    //Add user to list of likes
     const likePost = async () => {
 
         const userRef = collection(db, `Cards/${cardID}/Likes`);
@@ -37,11 +21,12 @@ export default function Heart({cardID, isLiked ,updateCallBack})
         };
     
         addDoc(userRef, userData)
-        .then(() => {console.log("like!"); updateCallBack()})
+        .then(() => {console.log("like!"); updateCallBack()}) //After a like action perform the callback passed from parent (set the update flag for the page to re-render)
         .catch((error) => console.error("Error trying to like the card :( : ",error));
     }
 
 
+    //To unlike the post, filter for the user's ID in the card collection, then delete the document containing that ID
     const unlikePost = async () => {
 
         const q = query(collection(db, `Cards/${cardID}/Likes`), where("uid","==",user.uid));

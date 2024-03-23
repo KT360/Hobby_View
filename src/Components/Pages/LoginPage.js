@@ -11,7 +11,7 @@ export default function LoginPage(){
 
     const dispatch = useDispatch();
 
-
+    //Check if userID is present in database
     const checkForUser = async (newLogIn) =>{
 
         const uid = newLogIn.uid;
@@ -33,6 +33,7 @@ export default function LoginPage(){
 
     }
 
+    //When page is loaded, check if a login state already exists, then capture user's information
     useEffect(()=>{
 
         const unsubscribe = onAuthStateChanged(auth, async (user) =>{
@@ -49,6 +50,7 @@ export default function LoginPage(){
     }, [dispatch])
 
 
+    //When login button pressed, open google popu for sign in, capture user info
     const signInWithGoogle = () => {
         const provider = new GoogleAuthProvider();
         signInWithPopup(auth, provider)

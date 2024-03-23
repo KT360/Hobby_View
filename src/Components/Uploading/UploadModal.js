@@ -17,12 +17,11 @@ import {getStorage, ref, uploadBytes, getDownloadURL} from "firebase/storage";
 
 
 
-//Modal to handle form input, whe the "Upload button is clicked"
-//onChange={event => setEmail(event.currentTarget.value)}
-export default function UploadModal({handleOpen, handleClose, index})
+//Modal to handle form input, when the "Upload button is clicked"
+export default function UploadModal({handleOpen, handleClose})
 {
 
-  //const editing = useSelector((state)=> state.editing.value);
+
   const modal = useSelector((state)=> state.modal.value);
   const page = useSelector((state) => state.window.value);
   const user = useSelector((state) =>  state.CurrentUser.value);
@@ -31,18 +30,8 @@ export default function UploadModal({handleOpen, handleClose, index})
   const [uploadFile, setUploadFile] = useState(null);
 
   const dispatch = useDispatch();
-  //const [firstName, setFirstName] = useState(modal.name.split(" ")[0]);
-  //const [lastName, setLastName] = useState(modal.name.split(" ")[1]);
 
-
-  /*
-  function updateName()
-  {
-    let newName = firstName+" "+lastName;
-
-    dispatch(update_form({name: newName}))
-  }
-  */
+  //When an image is selected, set state, then read image file to dispaly a preview
   const handleImageChange = (e) => {
 
     const file = e.target.files[0];
@@ -66,6 +55,7 @@ export default function UploadModal({handleOpen, handleClose, index})
     }
   };
 
+  //Add user post to database
   const addCard = (url) =>{
 
     const cardsRef = collection(db, 'Cards');
@@ -82,18 +72,20 @@ export default function UploadModal({handleOpen, handleClose, index})
     .catch((error) => console.error("Error adding card: ",error));
   }
 
+  
   const handleUpload = async () => {
+  
     const storage = getStorage();
-
 
     try {
 
+      //Create a reference in storage
       const imageRef = ref(storage, `UploadedImages/${uploadFile.name}`);
-
+      //Get data/snapshot once uploaded
       const snapshot = await uploadBytes(imageRef, uploadFile);
-
+      //Get url
       const imageURL = await getDownloadURL(snapshot.ref);
-
+      //Add a new post using url
       addCard(imageURL);
 
       }catch (error)
@@ -102,6 +94,12 @@ export default function UploadModal({handleOpen, handleClose, index})
       }
   };
 
+  /*
+    Once user clicks 'Save', set global state of loading to true,
+    Upload image and Card data
+    Close modal, stop loading
+    Trigger a page update by switching the current update state, (MainPage depends on update, so it will trigger useEffect)
+  */
   const handleClick = async () => {
     dispatch(set_loading(true));
     await handleUpload();

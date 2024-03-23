@@ -24,14 +24,11 @@ import {getDocs, query, where, collection} from "firebase/firestore"
 import { db } from "../../helpers/firebase_init";
 
 
-// Connect to the server
-//const socket = io.connect('/');
 
 //*Note for Icons, remember to delete some of the links  in the header
 
 
 //Dynamic component that renders the current page from a list of pages(pageConfigs)
-//Takes those elements, and renders them
 export default function MainPage()
 {
 
@@ -42,13 +39,15 @@ export default function MainPage()
     const [cards, setCards] = useState([]);
 
 
+    //Objects that keep track of my modal states, One for the modal responsible for uploading, the other for the modal responsible for viewing posts/comments etc.
     const { isOpen: isUploadOpen, onOpen: onUploadOpen, onClose:onUploadClose } = useDisclosure();
     const {isOpen: isViewOpen, onOpen: onViewOpen, onClose: onViewClose} = useDisclosure();
 
-            //Object that stores pages as other objects
+    //Object that stores pages as other objects
     //Button configs is an array of objects that represent the buttons(MenuButton)
-    //(Text, action, icon, and color scheme)
-    //documentCards is a flag to check if we should populate with cards
+    //Each MenuButton requires to be passed in a page and a function to notify for the page change
+    //documentCards is a flag to check if we should populate with cards i.e user posts
+    //UseMemo so that react creates the object once, and remembers it
     const pageConfigs = useMemo(() => { return{
         
             home_page: { buttonConfigs: [ {text: "Vacation", action: ()=> dispatch(change_page("vacation_page")), icon: CalendarIcon, colorScheme: "teal", variant:"outline"},
@@ -65,8 +64,7 @@ export default function MainPage()
     
     },[dispatch]);
 
-    //Every time the page is changed make a request to the server to get
-    //the cards for this page
+    //Every time the page is changed make a request to the server to get the cards for the current page
     useEffect(() => {
         const fetchCards = async ()=>
         {
@@ -81,6 +79,7 @@ export default function MainPage()
                 const querySnapshot = await getDocs(q);
                 const fetchedCards = [];
 
+                //Get card data, add in the Firestore doc ID just in case
                 querySnapshot.forEach(doc => {
                     fetchedCards.push({id:doc.id, ...doc.data()})
                 });
@@ -95,30 +94,12 @@ export default function MainPage()
             }
         };
 
-        //Render cards if it is a page that has them or an update has been raised
+        //Fetch and Render cards if it is a page that has them
         if(pageConfigs[page].documentCards) 
         {
             fetchCards();
             dispatch(set_update_page(false));
         }
-
-        /*
-        //I forgot why I put this here....
-        dispatch(set_updated_page(false));
-
-
-
-        // Listen for the 'card updated' event
-        socket.on('card updated', () => {
-            console.log("Card updated event received. Refreshing cards.");
-            populatePages();
-        });
-
-        // Remove the event listener when the component is unmounted
-        return () => {
-            socket.off('card updated');
-        };
-        */
 
     }, [page, update_page, pageConfigs, dispatch]);
 
@@ -145,7 +126,7 @@ export default function MainPage()
             )}
             
             {pageConfigs[page].documentCards? cards?.map((config, index) => 
-            <DocumentCard key={config.id} onOpen={onViewOpen} {...config}></DocumentCard>
+            <DocumentCard key={config.id} onOpen={onViewOpen} {...config}></DocumentCard>//It's important that the key here is FireStore document ID, React seems to confuse post data between page if not set
             ): null}
 
             {pageConfigs[page].documentCards? <Button position={"fixed"} bg={"#74d1a6"} color={"white"} right={"20px"} bottom={"20px"} onClick={()=>{onUploadOpen()}}><Icon as={AddIcon} boxSize={5}/></Button>: null}

@@ -16,6 +16,7 @@ import { FaHome } from 'react-icons/fa';
 //A container for all the main UI components like the drawer
 //NavButtons
 //and the page
+//Holds MainPage, and LoginPage
 export default function Window()
 {
     const {isOpen, onOpen, onClose} = useDisclosure();
