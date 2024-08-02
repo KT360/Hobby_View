@@ -85,7 +85,7 @@ export default function DocumentCard({name,Description, imagePath, index , onOpe
     },[user.uid,update, id, page]);
 
     return(
-        <Card _hover={{border:"3px solid #65cc9c", borderRadius:"5px"}} onClick={() => {onOpen(); dispatch(set_selected(id))}} maxW='md' {...props} margin={5} backgroundColor={'white'}>
+        <Card _hover={{border:"3px solid #65cc9c", borderRadius:"5px"}} onClick={() => {onOpen(); dispatch(set_selected(id))}} maxW='md' {...props} backgroundColor={'white'}>
             <CardHeader>
                 <Flex flex='1' gap='4' alignItems='center' flexWrap='wrap'>
                     <Avatar name={owner} />

@@ -193,7 +193,7 @@ export default function ViewModal({isOpen, onClose}){
 
                             { comments ?
                                 <Box
-                                maxH="300px" // Adjust based on your needs
+                                maxH="300px" 
                                 overflowY="scroll"
                                 borderWidth="1px"
                                 borderRadius="lg"

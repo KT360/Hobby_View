@@ -5,7 +5,7 @@ import { change_page } from "../Window/windowSlice";
 
 import { AddIcon} from "@chakra-ui/icons";
 import CAT from '../../../src/assets/nyan-cat-poptart-cat.gif'
-import DocumentCard from "../Applications/DocumentCard";
+
 
 
 
@@ -22,9 +22,10 @@ import {useDisclosure} from "@chakra-ui/react"
 
 import {getDocs, query, where, collection} from "firebase/firestore"
 import { db } from "../../helpers/firebase_init";
+import PaginatedCards from "./PaginatedCards";
 
 
-
+//TODO: Because cards are in grid format, a card having a different aspect ratio next to another, can distort the other card's content
 //*Note for Icons, remember to delete some of the links  in the header
 
 
@@ -125,9 +126,11 @@ export default function MainPage()
             <MenuButton key={index} {...config}></MenuButton> //Pass configs to component (ex: text, action)
             )}
             
-            {pageConfigs[page].documentCards? cards?.map((config, index) => 
-            <DocumentCard key={config.id} onOpen={onViewOpen} {...config}></DocumentCard>//It's important that the key here is FireStore document ID, React seems to confuse post data between page if not set
-            ): null}
+            {pageConfigs[page].documentCards && cards ?
+                
+                <PaginatedCards cards={cards} onViewOpen={onViewOpen}/>
+
+            : null}
 
             {pageConfigs[page].documentCards? <Button position={"fixed"} bg={"#74d1a6"} color={"white"} right={"20px"} bottom={"20px"} onClick={()=>{onUploadOpen()}}><Icon as={AddIcon} boxSize={5}/></Button>: null}
 
